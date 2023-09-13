@@ -3,17 +3,19 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-        <div class="dropdown" id="postform">
-            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" style="width:50vw;">
+        <div class="dropdown" id="postFormDiv">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" id="menuFormBtn" style="width:50vw;">
             + New Post
             </button>
-            <form action="{% url 'index' %}" class="dropdown-menu p-4" method="post" style="width:50vw;">
+            <form class="dropdown-menu p-4" id="newPostForm" novalidate method="post" onsubmit="return false"; style="width:50vw;">
+                <div class="alert alert-danger" role="alert" id="postAlert" style="display: none;">
+                </div>
                 {% csrf_token %}
                 <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label">Tell Your Thoughts!</label>
-                    <textarea class="form-control" id="exampleFormControlTextarea1" name="npost" rows="3"></textarea>
+                    <label for="postText" class="form-label">Tell Your Thoughts!</label>
+                    <textarea class="form-control" id="postText" name="npost" minlength="5" maxlength="400" rows="3"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Post</button>
+                <button id="postBtn" class="btn btn-primary">Post</button>
             </form>
         </div>
     {% endif %}
