@@ -80,3 +80,35 @@ def addPost(request):
     new_post.save()
     return JsonResponse({"message": "Post Added Successfully."}, status=201)
 
+
+@csrf_exempt
+def showPosts(request):
+    data = json.loads(request.body)
+    filter = data["filter"]
+    posts = None
+
+    if filter == "all":
+        posts = Post.objects.all()
+    elif filter == "following":
+        #followings = request.user.following
+        pass
+
+    rposts = [post.serialize() for post in posts]
+    if request.user.is_authenticated:
+        liked_posts = request.user.liked.all()
+        user_posts = Post.objects.filter(user=request.user)
+        if len(liked_posts) == 0 or len(user_posts) == 0:
+            rliked_posts = []
+            ruser_posts = []
+        else:
+            ruser_posts = [post.id for post in user_posts].reverse()
+            rliked_posts = [post.id for post in liked_posts].reverse()
+            
+    else:
+        rliked_posts = []
+        ruser_posts = []
+    return JsonResponse({
+        "posts": rposts,
+        "liked": rliked_posts,
+        "user_posts": ruser_posts,
+    }, status=201)

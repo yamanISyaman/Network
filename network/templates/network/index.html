@@ -4,29 +4,22 @@
 {% block body %}
     {% if user.is_authenticated %}
         <div class="dropdown" id="postFormDiv">
-            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" id="menuFormBtn" style="width:50vw;">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" id="menuFormBtn" onclick="addMargin()" style="width:50vw;">
             + New Post
             </button>
             <form class="dropdown-menu p-4" id="newPostForm" novalidate method="post" onsubmit="return false"; style="width:50vw;">
                 <div class="alert alert-danger" role="alert" id="postAlert" style="display: none;">
                 </div>
-                {% csrf_token %}
                 <div class="mb-3">
                     <label for="postText" class="form-label">Tell Your Thoughts!</label>
                     <textarea class="form-control" id="postText" name="npost" minlength="5" maxlength="400" rows="3"></textarea>
                 </div>
-                <button id="postBtn" class="btn btn-primary">Post</button>
+                <button id="postBtn" class="btn btn-primary" onclick="addPost()">Post</button>
             </form>
         </div>
     {% endif %}
     <div>
-        TO DO
+        <h1 id="heading"></h1>
+        <div id="showPosts"></div>
     </div>
-{% endblock %}
-
-
-{% block script %}
-    <script src="{% static 'network/index.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
 {% endblock %}
