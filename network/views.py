@@ -52,6 +52,10 @@ def register(request):
             return render(request, "network/register.html", {
                 "message": "Passwords must match."
             })
+        elif username in ["all", "following"]:
+            return render(request, "network/register.html", {
+                "message": "Reserved username, try another."
+            })
 
         # Attempt to create new user
         try:
@@ -90,8 +94,16 @@ def showPosts(request):
     if filter == "all":
         posts = Post.objects.all()
     elif filter == "following":
-        #followings = request.user.following
-        pass
+        followings = request.user.following.all()
+        posts = []
+        for f in followings:
+            posts += [*(f.post.all())]
+    else:
+        try:
+            user = User.objects.get(username=filter)
+        except IntegrityError:
+            return HttpResponse('Error 404')
+        posts = user.post.all()
 
     rposts = [post.serialize() for post in posts]
     if request.user.is_authenticated:

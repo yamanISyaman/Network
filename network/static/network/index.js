@@ -38,10 +38,10 @@ function addPost() {
 
 function showPosts(filter) {
     if (filter == 'all') {
-        document.querySelector('#heading').innerHTML = 'All Posts';
+        document.querySelector('#middleHeading').innerHTML = '<h1>All Posts</h1>';
         
     } else if (filter == 'following') {
-        document.querySelector('#heading').innerHTML = 'Followings Posts';
+        document.querySelector('#middleHeading').innerHTML = '<h1>Your Followings Posts</h1>';
         
     } else {}
     fetch('/showPosts', {
@@ -60,17 +60,19 @@ function showPosts(filter) {
 
 function viewPost(posts, liked, user_posts) {
     posts.forEach((post) => {
-        html = `<div class="card" style="width: 50vw;">
+        let html = `<div class="card" style="width: 50vw;">
             <div class="card-body">
-                <h5 class="card-title" onclick="showPage(${post.user})">${post.user}</h5>
+                <h5 class="card-title" onclick="showPage('${post.user}')">${post.user}</h5>
                 <p class="card-text">${post.text}</p>`;
         if (user_posts.includes(post.id)) {
             html += `
                 <a class="card-link" onclick="editPost(${post.id})">Edit</a>
             <br>`;
         } else {}
-        html += `<a id="like${post.id}" onclick="pressLike(${post.id}, ${post.user})" class="card-link">Likes</a> ${post.likes}
-                <a class="card-link" onclick="pressComment(${post.id}, ${post.user})">Comment</a>
+        html += `<i id="like${post.id}" onclick="pressLike(${post.id}, ${post.user})" width="16" height="16" class="bi bi-heart" viewBox="0 0 16 16"></i>
+                ${post.likes}
+                <br>
+                <a class="card-link" onclick="pressComment(${post.id}, '${post.user}')">Comment</a>
                 ${post.comments}
             </div>
         </div>`;
@@ -85,7 +87,11 @@ function editPost(id) {
 
 
 function showPage(username) {
-    console.log('To Do');
+    document.querySelector('#middleHeading').innerHTML = `
+    <h1>${username}</h1>
+    <button onclick="pressFollow('${username}')" class="btn btn-primary">follow</button>
+    `;
+    showPosts(username);
 }
 
 
@@ -96,4 +102,8 @@ function pressComment(id, username) {
 
 function pressLike(id, username) {
     console.log('To Do');
+}
+
+function pressFollow(username) {
+    console.log('To Do')
 }
