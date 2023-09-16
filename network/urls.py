@@ -11,4 +11,5 @@ urlpatterns = [
     path("addPost", views.addPost, name="addPost"),
     path("showPosts", views.showPosts, name="showPosts"),
     path("showPage", views.showPage, name="showPage"),
+    path("pressFollow", views.pressFollow, name="pressFollow"),
 ]

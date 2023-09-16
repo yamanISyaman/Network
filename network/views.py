@@ -143,3 +143,22 @@ def showPage(request):
     else:
         response["signed"] = False
     return JsonResponse(response, status=201)
+
+
+@login_required
+@csrf_exempt
+def pressFollow(request):
+    data = json.loads(request.body)
+    username = data.get("username")
+    user = User.objects.get(username=username)
+    followings = request.user.following.all()
+    result = {}
+    if user in followings:
+        request.user.following.remove(user)
+        result["button"] = "follow"
+    else:
+        request.user.following.add(user)
+        result["button"] = "unfollow"
+
+    return JsonResponse(result, status=201)
+    

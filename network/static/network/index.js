@@ -107,7 +107,7 @@ function showPage(username) {
     `;
             }
             else {
-                document.querySelector('#middleHeading').innerHTML += `<button onclick="pressFollow('${username}')" class="btn btn-primary">follow</button>
+                document.querySelector('#middleHeading').innerHTML += `<button onclick="pressFollow('${username}')" class="btn btn-primary" id="followBtn">follow</button>
     `;
             }
         } else {}
@@ -127,5 +127,14 @@ function pressLike(id, username) {
 
 
 function pressFollow(username) {
-    console.log('To Do')
+    fetch('/pressFollow', {
+        method: 'POST',
+        body: JSON.stringify({
+            username: username,
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
+        document.querySelector('#followBtn').innerHTML = result.button;
+    })
 }
