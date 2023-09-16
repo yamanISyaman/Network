@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    showPosts('all');
+    showPosts('all', 1);
 });
 
 
@@ -31,12 +31,12 @@ function addPost() {
             })
         })
         document.querySelector('#menuFormBtn').click();
-        showPosts('all');
+        showPosts('all', 1);
     }
 }
 
 
-function showPosts(filter) {
+function showPosts(filter, page) {
     if (filter == 'all') {
         document.querySelector('#middleHeading').innerHTML = '<h1>All Posts</h1>';
         
@@ -48,17 +48,18 @@ function showPosts(filter) {
         method: 'POST',
         body: JSON.stringify({
             filter: filter,
+            page: page,
         })
     })
     .then(response => response.json())
     .then(result => {
-        viewPost(result.posts, result.liked, result.user_posts);
+        viewPost(result.posts, result.liked, result.user_posts, result.next, result.pre, page, filter);
     })
     document.querySelector('#showPosts').innerHTML = '';
 }
 
 
-function viewPost(posts, liked, user_posts) {
+function viewPost(posts, liked, user_posts, next, pre, page, filter) {
     if (posts.length == 0) {
         document.querySelector('#showPosts').innerHTML += "<h3>No Posts!</h3>";
     } else {
@@ -66,7 +67,8 @@ function viewPost(posts, liked, user_posts) {
             let html = `<div class="card" style="width: 50vw;">
                 <div class="card-body">
                     <h5 class="card-title" onclick="showPage('${post.user}')">${post.user}</h5>
-                    <p class="card-text">${post.text}</p>`;
+                    <p class="card-text">${post.text}</p>
+                    <p class="card-text">${post.date}</p>`;
             if (user_posts.includes(post.id)) {
                 html += `
                     <a class="card-link" onclick="editPost(${post.id})">Edit</a>
@@ -81,6 +83,18 @@ function viewPost(posts, liked, user_posts) {
             </div>`;
             document.querySelector('#showPosts').innerHTML += html;
         })
+        let pg = `
+            <nav>
+              <ul class="pagination">`;
+        if (pre) {
+            pg += `<li class="page-item"><a class="page-link" onclick="showPosts('${filter}', ${page - 1})">Previous</a></li>`;
+        } else {}
+        if (next) {
+            pg += `<li class="page-item"><a class="page-link" onclick="showPosts('${filter}', ${page + 1})">Next</a></li>`;
+        } else {}
+        pg += `</ul>
+            </nav>`;
+        document.querySelector('#showPosts').innerHTML += pg;
     }
 }
 
@@ -103,7 +117,7 @@ function showPage(username) {
     .then(result => {
         if (result.signed) {
             if (result.following) {
-                document.querySelector('#middleHeading').innerHTML += `<button onclick="pressFollow('${username}')" class="btn btn-primary">unfollow</button>
+                document.querySelector('#middleHeading').innerHTML += `<button onclick="pressFollow('${username}')" class="btn btn-primary" id="followBtn">unfollow</button>
     `;
             }
             else {
@@ -112,7 +126,7 @@ function showPage(username) {
             }
         } else {}
     })
-    showPosts(username);
+    showPosts(username, 1);
 }
 
 

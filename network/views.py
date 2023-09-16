@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 from .models import User, Post, Comment
 
@@ -89,6 +90,7 @@ def addPost(request):
 def showPosts(request):
     data = json.loads(request.body)
     filter = data["filter"]
+    page = data["page"]
     posts = None
 
     if filter == "all":
@@ -105,7 +107,8 @@ def showPosts(request):
             return HttpResponse('Error 404')
         posts = user.post.all()
 
-    rposts = [post.serialize() for post in posts]
+    nposts = [post.serialize() for post in posts]
+    rposts = sorted(nposts, key=lambda _: _['id'], reverse=True)
     if request.user.is_authenticated:
         liked_posts = request.user.liked.all()
         user_posts = Post.objects.filter(user=request.user)
@@ -121,8 +124,17 @@ def showPosts(request):
     else:
         rliked_posts = []
         ruser_posts = []
+
+    p = Paginator(rposts, 2)
+    try:
+        p = p.page(page)
+    except EmptyPage:
+        return HttpResponse('Error 404')
+        
     return JsonResponse({
-        "posts": sorted(rposts, key=lambda _: _['date']),
+        "next": p.has_next(),
+        "pre": p.has_previous(),
+        "posts": p.object_list,
         "liked": rliked_posts,
         "user_posts": ruser_posts,
     }, status=201)
