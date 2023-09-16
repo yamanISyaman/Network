@@ -2,6 +2,6 @@
     margin-bottom: 0vh; 
 }
 
-#middleHeading {
+#middleHeading, h3 {
     margin-left: 2vw;
 }

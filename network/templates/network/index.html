@@ -20,10 +20,13 @@
     {% endif %}
     <div>
         <div id="middleHeading">
-            <h1 id="heading"></h1>
         </div>
         <br>
         <div id="showPosts">
         </div>
     </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/index.js' %}"></script>
 {% endblock %}

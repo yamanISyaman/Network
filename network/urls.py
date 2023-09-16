@@ -10,4 +10,5 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("addPost", views.addPost, name="addPost"),
     path("showPosts", views.showPosts, name="showPosts"),
+    path("showPage", views.showPage, name="showPage"),
 ]

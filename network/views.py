@@ -126,3 +126,20 @@ def showPosts(request):
         "liked": rliked_posts,
         "user_posts": ruser_posts,
     }, status=201)
+
+
+@csrf_exempt
+def showPage(request):
+    data = json.loads(request.body)
+    username = data.get('username')
+    user = User.objects.get(username=username)
+    response = {}
+    if request.user.is_authenticated:
+        response["signed"] = True
+        if user in request.user.following.all():
+            response["following"] = True
+        else:
+            response["following"] = False
+    else:
+        response["signed"] = False
+    return JsonResponse(response, status=201)

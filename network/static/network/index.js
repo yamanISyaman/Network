@@ -59,27 +59,29 @@ function showPosts(filter) {
 
 
 function viewPost(posts, liked, user_posts) {
-    posts.forEach((post) => {
-        console.log(post.id);
-        console.log(user_posts);
-        let html = `<div class="card" style="width: 50vw;">
-            <div class="card-body">
-                <h5 class="card-title" onclick="showPage('${post.user}')">${post.user}</h5>
-                <p class="card-text">${post.text}</p>`;
-        if (user_posts.includes(post.id)) {
-            html += `
-                <a class="card-link" onclick="editPost(${post.id})">Edit</a>
-            <br>`;
-        } else {}
-        html += `<i id="like${post.id}" onclick="pressLike(${post.id}, ${post.user})" width="16" height="16" class="bi bi-heart" viewBox="0 0 16 16"></i>
-                ${post.likes}
-                <br>
-                <a class="card-link" onclick="pressComment(${post.id}, '${post.user}')">Comment</a>
-                ${post.comments}
-            </div>
-        </div>`;
-        document.querySelector('#showPosts').innerHTML += html;
-    })
+    if (posts.length == 0) {
+        document.querySelector('#showPosts').innerHTML += "<h3>No Posts!</h3>";
+    } else {
+        posts.forEach((post) => {
+            let html = `<div class="card" style="width: 50vw;">
+                <div class="card-body">
+                    <h5 class="card-title" onclick="showPage('${post.user}')">${post.user}</h5>
+                    <p class="card-text">${post.text}</p>`;
+            if (user_posts.includes(post.id)) {
+                html += `
+                    <a class="card-link" onclick="editPost(${post.id})">Edit</a>
+                <br>`;
+            } else {}
+            html += `<i id="like${post.id}" onclick="pressLike(${post.id}, ${post.user})" width="16" height="16" class="bi bi-heart" viewBox="0 0 16 16"></i>
+                    ${post.likes}
+                    <br>
+                    <a class="card-link" onclick="pressComment(${post.id}, '${post.user}')">Comment</a>
+                    ${post.comments}
+                </div>
+            </div>`;
+            document.querySelector('#showPosts').innerHTML += html;
+        })
+    }
 }
 
 
@@ -90,9 +92,26 @@ function editPost(id) {
 
 function showPage(username) {
     document.querySelector('#middleHeading').innerHTML = `
-    <h1>${username}</h1>
-    <button onclick="pressFollow('${username}')" class="btn btn-primary">follow</button>
+    <h1>${username}</h1>`;
+    fetch('/showPage', {
+        method: 'POST',
+        body: JSON.stringify({
+            username: username,
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.signed) {
+            if (result.following) {
+                document.querySelector('#middleHeading').innerHTML += `<button onclick="pressFollow('${username}')" class="btn btn-primary">unfollow</button>
     `;
+            }
+            else {
+                document.querySelector('#middleHeading').innerHTML += `<button onclick="pressFollow('${username}')" class="btn btn-primary">follow</button>
+    `;
+            }
+        } else {}
+    })
     showPosts(username);
 }
 
