@@ -60,6 +60,8 @@ function showPosts(filter) {
 
 function viewPost(posts, liked, user_posts) {
     posts.forEach((post) => {
+        console.log(post.id);
+        console.log(user_posts);
         let html = `<div class="card" style="width: 50vw;">
             <div class="card-body">
                 <h5 class="card-title" onclick="showPage('${post.user}')">${post.user}</h5>
@@ -103,6 +105,7 @@ function pressComment(id, username) {
 function pressLike(id, username) {
     console.log('To Do');
 }
+
 
 function pressFollow(username) {
     console.log('To Do')

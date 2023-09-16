@@ -109,18 +109,20 @@ def showPosts(request):
     if request.user.is_authenticated:
         liked_posts = request.user.liked.all()
         user_posts = Post.objects.filter(user=request.user)
-        if len(liked_posts) == 0 or len(user_posts) == 0:
+        if len(liked_posts) == 0:
             rliked_posts = []
+        else:
+            rliked_posts = [post.id for post in liked_posts]
+        if len(user_posts) == 0:
             ruser_posts = []
         else:
-            ruser_posts = [post.id for post in user_posts].reverse()
-            rliked_posts = [post.id for post in liked_posts].reverse()
+            ruser_posts = [post.id for post in user_posts]
             
     else:
         rliked_posts = []
         ruser_posts = []
     return JsonResponse({
-        "posts": rposts,
+        "posts": sorted(rposts, key=lambda _: _['date']),
         "liked": rliked_posts,
         "user_posts": ruser_posts,
     }, status=201)
