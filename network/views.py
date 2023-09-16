@@ -134,7 +134,7 @@ def showPage(request):
     username = data.get('username')
     user = User.objects.get(username=username)
     response = {}
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and user != request.user:
         response["signed"] = True
         if user in request.user.following.all():
             response["following"] = True
