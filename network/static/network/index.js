@@ -53,9 +53,9 @@ function showPosts(filter, page) {
     })
     .then(response => response.json())
     .then(result => {
+        document.querySelector('#showPosts').innerHTML = '';
         viewPost(result.posts, result.liked, result.user_posts, result.next, result.pre, page, filter, result.signed);
     })
-    document.querySelector('#showPosts').innerHTML = '';
 }
 
 
