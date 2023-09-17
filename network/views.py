@@ -125,7 +125,7 @@ def showPosts(request):
         rliked_posts = []
         ruser_posts = []
 
-    p = Paginator(rposts, 2)
+    p = Paginator(rposts, 10)
     try:
         p = p.page(page)
     except EmptyPage:
