@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 
-from .models import User, Post, Comment
+from .models import User, Post
 
 
 def index(request):
@@ -173,4 +173,17 @@ def pressFollow(request):
         result["button"] = "unfollow"
 
     return JsonResponse(result, status=201)
-    
+
+
+@csrf_exempt
+@login_required
+def editPost(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    data = json.loads(request.body)
+    post = Post.objects.get(id=data["id"])
+    if post.user != request.user:
+        return HttpResponse('Invalid Request')
+    post.text = data["text"]
+    post.save()
+    return JsonResponse({"message": "Post Edited Successfully."}, status=201)

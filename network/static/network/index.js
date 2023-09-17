@@ -67,18 +67,17 @@ function viewPost(posts, liked, user_posts, next, pre, page, filter) {
             let html = `<div class="card" style="width: 50vw;">
                 <div class="card-body">
                     <h5 class="card-title" onclick="showPage('${post.user}')">${post.user}</h5>
-                    <p class="card-text">${post.text}</p>
+                    <div id="editArea${post.id}">
+                        <p class="card-text" id="ptext${post.id}">${post.text}</p>
+                    </div>
                     <p class="card-text">${post.date}</p>`;
             if (user_posts.includes(post.id)) {
                 html += `
-                    <a class="card-link" onclick="editPost(${post.id})">Edit</a>
+                <a class="card-link" onclick="editPost(${post.id})" id="editBtn${post.id}">Edit</a>
                 <br>`;
             } else {}
             html += `<i id="like${post.id}" onclick="pressLike(${post.id}, ${post.user})" width="16" height="16" class="bi bi-heart" viewBox="0 0 16 16"></i>
                     ${post.likes}
-                    <br>
-                    <a class="card-link" onclick="pressComment(${post.id}, '${post.user}')">Comment</a>
-                    ${post.comments}
                 </div>
             </div>`;
             document.querySelector('#showPosts').innerHTML += html;
@@ -96,11 +95,6 @@ function viewPost(posts, liked, user_posts, next, pre, page, filter) {
             </nav>`;
         document.querySelector('#showPosts').innerHTML += pg;
     }
-}
-
-
-function editPost(id) {
-    console.log('To Do');
 }
 
 
@@ -130,16 +124,6 @@ function showPage(username) {
 }
 
 
-function pressComment(id, username) {
-    console.log('To Do');
-}
-
-
-function pressLike(id, username) {
-    console.log('To Do');
-}
-
-
 function pressFollow(username) {
     fetch('/pressFollow', {
         method: 'POST',
@@ -151,4 +135,45 @@ function pressFollow(username) {
     .then(result => {
         document.querySelector('#followBtn').innerHTML = result.button;
     })
+}
+
+
+function editPost(id) {
+    old_text = document.querySelector(`#ptext${id}`).innerHTML;
+    document.querySelector(`#editArea${id}`).innerHTML = `
+    <div class="alert alert-danger" role="alert" id="editAlert${id}" style="display: none;">
+    </div>
+    <textarea class="form-control" id="editText${id}" name="npost" minlength="5" maxlength="400" rows="3">${old_text}</textarea>
+    <button id="editBtn" class="btn btn-primary" onclick="pressEdit(${id})">Edit</button>
+    `;
+    document.querySelector(`#editBtn${id}`).style.display = 'none';
+}
+
+
+function pressEdit(id) {
+    const ntext = document.querySelector(`#editText${id}`).value;
+    if (ntext.length < 5 || ntext.length > 400) {
+        let alert = document.querySelector(`#editAlert${id}`);
+        alert.innerHTML = 'posts must be between [5 - 400] characters';
+        alert.style.display = 'block';
+    } else {
+        fetch('/editPost', {
+            method: 'POST',
+            body: JSON.stringify({
+                text: ntext,
+                id: id,
+            })
+        })
+        document.querySelector(`#editArea${id}`).innerHTML = `
+            <div class="alert alert-danger" role="alert" id="editAlert${id}" style="display: none;">
+            </div>
+            <p class="card-text" id="ptext${id}">${ntext}</p>
+            `;
+        document.querySelector(`#editBtn${id}`).style.display = 'block';
+    }
+}
+
+
+function pressLike(id, username) {
+    console.log('To Do');
 }
