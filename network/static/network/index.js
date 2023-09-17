@@ -30,8 +30,10 @@ function addPost() {
                 postText: text,
             })
         })
-        document.querySelector('#menuFormBtn').click();
+        .then(result => {
+            document.querySelector('#menuFormBtn').click();
         showPosts('all', 1);
+        })
     }
 }
 
