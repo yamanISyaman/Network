@@ -137,6 +137,7 @@ def showPosts(request):
         "posts": p.object_list,
         "liked": rliked_posts,
         "user_posts": ruser_posts,
+        "signed": request.user.is_authenticated,
     }, status=201)
 
 
@@ -187,3 +188,26 @@ def editPost(request):
     post.text = data["text"]
     post.save()
     return JsonResponse({"message": "Post Edited Successfully."}, status=201)
+
+
+@csrf_exempt
+@login_required
+def pressLike(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    data = json.loads(request.body)
+    post = Post.objects.get(id=data["id"])
+
+    increase = None
+    if request.user in post.like.all():
+        post.like.remove(request.user)
+        increase = False
+    else:
+        post.like.add(request.user)
+        increase = True
+
+    return JsonResponse({
+        "increase": increase,
+        "likes": len(post.like.all())
+    }, status=201)

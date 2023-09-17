@@ -53,13 +53,13 @@ function showPosts(filter, page) {
     })
     .then(response => response.json())
     .then(result => {
-        viewPost(result.posts, result.liked, result.user_posts, result.next, result.pre, page, filter);
+        viewPost(result.posts, result.liked, result.user_posts, result.next, result.pre, page, filter, result.signed);
     })
     document.querySelector('#showPosts').innerHTML = '';
 }
 
 
-function viewPost(posts, liked, user_posts, next, pre, page, filter) {
+function viewPost(posts, liked, user_posts, next, pre, page, filter, signed) {
     if (posts.length == 0) {
         document.querySelector('#showPosts').innerHTML += "<h3>No Posts!</h3>";
     } else {
@@ -76,10 +76,19 @@ function viewPost(posts, liked, user_posts, next, pre, page, filter) {
                 <a class="card-link" onclick="editPost(${post.id})" id="editBtn${post.id}">Edit</a>
                 <br>`;
             } else {}
-            html += `<i id="like${post.id}" onclick="pressLike(${post.id}, ${post.user})" width="16" height="16" class="bi bi-heart" viewBox="0 0 16 16"></i>
-                    ${post.likes}
-                </div>
-            </div>`;
+            if (signed) {
+                if (liked.includes(post.id)) {
+                    html += `<i id="like${post.id}" onclick="pressLike(${post.id})" width="16" height="16" class="bi bi-heart-fill" style="color: red" viewBox="0 0 16 16"></i>
+                        <p id="likesNum${post.id}" class="likes">${post.likes}</p>`;
+                } else {
+                    html += `<i id="like${post.id}" onclick="pressLike(${post.id})" width="16" height="16" class="bi bi-heart" viewBox="0 0 16 16"></i>
+                        <p id="likesNum${post.id}" class="likes">${post.likes}</p>`;
+                }
+            } else {
+                html += `<i id="like${post.id}" width="16" height="16" class="bi bi-heart" viewBox="0 0 16 16"></i>
+                        <p id="likesNum${post.id}" class="likes">${post.likes}</p>`;
+            }
+            html += '</div></div>'
             document.querySelector('#showPosts').innerHTML += html;
         })
         let pg = `
@@ -174,6 +183,23 @@ function pressEdit(id) {
 }
 
 
-function pressLike(id, username) {
-    console.log('To Do');
+function pressLike(id) {
+    fetch('/pressLike', {
+        method: 'POST',
+        body: JSON.stringify({
+            id: id,
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.increase) {
+            document.querySelector(`#like${id}`).className = 'bi bi-heart-fill';
+            document.querySelector(`#like${id}`).style.color = 'red';
+            
+        } else {
+            document.querySelector(`#like${id}`).className = 'bi bi-heart';
+            document.querySelector(`#like${id}`).style.color = 'black';
+        }
+        document.querySelector(`#likesNum${id}`).innerHTML = result.likes;
+    })
 }
