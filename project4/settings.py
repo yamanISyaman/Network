@@ -26,8 +26,7 @@ SECRET_KEY = '13kl@xtukpwe&xj2xoysxe9_6=tf@f8ewxer5n&ifnd46+6$%8'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'network--justatestcode.repl.co',
-    '10.20.0.137'
+    '*'
 ]
 
 
